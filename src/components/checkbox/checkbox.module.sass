@@ -1,0 +1,56 @@
+@import "../../style-guide/index"
+
+$checkbox-size: 20px
+
+.checkbox
+    position: relative
+    display: inline-flex
+    height: $checkbox-size
+    line-height: $checkbox-size
+    padding-left: $checkbox-size + 5px
+
+    &__input
+        position: absolute
+        top: 0
+        left: 0
+        width: 1px
+        height: 1px
+
+        & ~ .checkbox__check::before,
+        &:checked ~ .checkbox__check::after
+            content: ''
+            display: block
+            position: absolute
+            top: 0
+            left: 0
+
+        & ~ .checkbox__check::before
+            width: $checkbox-size
+            height: $checkbox-size
+            border: 2px solid $gray-color
+            background-color: $white-color
+            border-radius: 3px
+            cursor: pointer
+
+        &:checked ~ .checkbox__check::after
+            width: 9px
+            height: 16px
+            border-bottom: 3px solid $dark-blue-color
+            border-right: 3px solid $dark-blue-color
+            transform: rotate(35deg)
+            margin-left: 5px
+            margin-top: 0
+
+        &:not(:disabled)
+            &:hover,
+            &:focus
+                ~ .checkbox__check::before
+                    border-color: $blue-color
+
+        &:disabled
+            ~ .checkbox__check::before
+                background-color: hsl(0,0%,95%)
+                cursor: default
+
+            ~ .checkbox__check::after
+                opacity: .5
