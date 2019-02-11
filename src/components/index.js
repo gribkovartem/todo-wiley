@@ -1,4 +1,6 @@
+export { Checkbox } from './checkbox';
 export { TasksList } from './tasks-list';
 export { Icon } from './icon';
-export { Header } from './header';
-export { Task, TaskForm } from './tasks-list';
+export { Task } from './tasks-list';
+export { ModalBox } from './modal-box';
+export { Input, TextArea, Button } from './shared';

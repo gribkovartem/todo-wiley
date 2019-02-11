@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 
 export function ModalBox(props) {
@@ -25,3 +26,7 @@ export function ModalBox(props) {
         </Modal>
     );
 }
+
+ModalBox.propTypes = {
+    children: PropTypes.element.isRequired,
+};

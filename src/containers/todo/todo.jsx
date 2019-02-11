@@ -1,8 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Header, TasksList, TaskForm, Icon } from '../../components';
+import { TasksList, Icon } from '../../components';
+import { TaskForm } from '../task-form';
 import { SORT_UP, SORT_DOWN } from '../../constants';
+
+const Title = styled.h1`
+    color: #fff;
+    font-weight: 700;
+    font-size: 48px;
+`;
+
+const Controls = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
 
 const Container = styled.div`
     display: flex;
@@ -24,19 +36,48 @@ export class Todo extends React.Component {
         ],
         sortOrder: SORT_UP,
         formOpened: false,
+        taskForEdit: null,
     };
 
-    handleOpenForm = () => {
+    handleOpenForm = (task = null) => {
         const { formOpened } = this.state;
-        this.setState({ formOpened: !formOpened });
+
+        if (task) {
+            this.setState({ taskForEdit: task });
+            this.setState({ formOpened: true });
+        } else {
+            this.setState({ formOpened: !formOpened });
+        }
+    };
+
+    handleCloseForm = () => {
+        this.setState({ formOpened: false, taskForEdit: null });
     };
 
     handleAddTask = task => {
         const { tasks } = this.state;
-        this.setState({ tasks: [...tasks, task] });
+        this.setState({
+            tasks: [
+                ...tasks,
+                {
+                    ...task,
+                    id: Math.max.apply(Math, tasks.map(task => task.id)) + 1,
+                },
+            ],
+            taskForEdit: null,
+        });
     };
 
-    handleCompleteTask() {}
+    handleCompleteTask = id => {
+        const { tasks } = this.state;
+        const updatedTasks = [...tasks];
+        const task = updatedTasks.find(task => task.id === id);
+        task.completed = !task.completed;
+
+        this.setState({
+            tasks: updatedTasks,
+        });
+    };
 
     handleDeleteTask = id => {
         const { tasks } = this.state;
@@ -59,25 +100,35 @@ export class Todo extends React.Component {
     };
 
     render() {
-        const { tasks, sortOrder, formOpened } = this.state;
+        const { tasks, sortOrder, formOpened, taskForEdit } = this.state;
 
         return (
             <Container>
-                <Header handleOpenForm={this.handleOpenForm} />
-                <SortIcon
-                    icon={`sort-alpha-${sortOrder}`}
-                    color="#fff"
-                    onClick={() => this.handleChangeSortOrder()}
-                />
+                <Title>Todo app</Title>
+                <Controls>
+                    <SortIcon
+                        icon={`sort-alpha-${sortOrder}`}
+                        color="#fff"
+                        onClick={() => this.handleChangeSortOrder()}
+                    />
+                    <Icon
+                        icon="plus"
+                        color="#fff"
+                        onClick={() => this.handleOpenForm()}
+                    />
+                </Controls>
                 <TasksList
                     tasks={tasks}
                     sortOrder={sortOrder}
+                    handleCompleteTask={this.handleCompleteTask}
                     handleDeleteTask={this.handleDeleteTask}
+                    handleOpenForm={this.handleOpenForm}
                 />
                 <TaskForm
                     isOpen={formOpened}
-                    onRequestClose={() => this.setState({ formOpened: false })}
+                    onRequestClose={this.handleCloseForm}
                     handleAddTask={this.handleAddTask}
+                    taskForEdit={taskForEdit}
                 />
             </Container>
         );

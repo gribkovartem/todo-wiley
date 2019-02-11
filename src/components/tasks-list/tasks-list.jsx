@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import { Task } from '../../components';
@@ -10,26 +11,42 @@ const TaskWrapper = styled.div`
     }
 `;
 
-export function TasksList({ tasks, sortOrder, handleDeleteTask }) {
+export function TasksList({
+    tasks,
+    sortOrder,
+    handleCompleteTask,
+    handleDeleteTask,
+    handleOpenForm,
+}) {
     return (
         <>
-            {tasks
-                .sort(sortTasks(sortOrder))
-                .map(({ id, title, completed }) => {
-                    return (
-                        <TaskWrapper key={id ? id : title}>
-                            <Task
-                                id={id}
-                                title={title}
-                                completed={completed}
-                                handleDeleteTask={handleDeleteTask}
-                            />
-                        </TaskWrapper>
-                    );
-                })}
+            {tasks.sort(sortTasks(sortOrder)).map(task => {
+                const { id, title, completed } = task;
+
+                return (
+                    <TaskWrapper key={id ? id : title}>
+                        <Task
+                            id={id}
+                            title={title}
+                            completed={completed}
+                            handleCompleteTask={handleCompleteTask}
+                            handleDeleteTask={handleDeleteTask}
+                            onClick={() => handleOpenForm(task)}
+                        />
+                    </TaskWrapper>
+                );
+            })}
         </>
     );
 }
+
+TasksList.propTypes = {
+    tasks: PropTypes.arrayOf(PropTypes.object).isRequired,
+    sortOrder: PropTypes.string.isRequired,
+    handleCompleteTask: PropTypes.func.isRequired,
+    handleDeleteTask: PropTypes.func.isRequired,
+    handleOpenForm: PropTypes.func.isRequired,
+};
 
 const sortTasks = sortOrder => {
     return (a, b) => {
