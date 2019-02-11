@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { Task } from '../../components';
 import { SORT_UP } from '../../constants';
+import { withStorage } from '../../hocs';
 
 const TaskWrapper = styled.div`
     :not(last-of-type) {
@@ -11,7 +12,13 @@ const TaskWrapper = styled.div`
     }
 `;
 
-export function TasksList({
+const EmptyMessage = styled.span`
+    color: #fff;
+    font-size: 18px;
+    margin-top: 20px;
+`;
+
+export const TasksList = withStorage(function({
     tasks,
     sortOrder,
     handleCompleteTask,
@@ -20,7 +27,7 @@ export function TasksList({
 }) {
     return (
         <>
-            {tasks.sort(sortTasks(sortOrder)).map(task => {
+            {tasks.length ? tasks.sort(sortTasks(sortOrder)).map(task => {
                 const { id, title, completed } = task;
 
                 return (
@@ -35,10 +42,10 @@ export function TasksList({
                         />
                     </TaskWrapper>
                 );
-            })}
+            }) : <EmptyMessage>No tasks yet 😞</EmptyMessage>}
         </>
     );
-}
+}, 'tasks');
 
 TasksList.propTypes = {
     tasks: PropTypes.arrayOf(PropTypes.object).isRequired,

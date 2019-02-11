@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { ModalBox, Input, TextArea, Button } from '../../components';
 
-const Form = styled.div`
+const Form = styled.form`
     width: 500px;
     padding: 10px;
     border-radius: 5px;
@@ -39,12 +39,19 @@ export class TaskForm extends React.Component {
 
         return (
             <ModalBox isOpen={isOpen} onRequestClose={onRequestClose}>
-                <Form>
+                <Form
+                    onSubmit={() => {
+                        handleAddTask(task);
+                        this.setState({ task: INITIAL_TASK });
+                        onRequestClose();
+                    }}
+                >
                     <ControlWrapper>
                         <Input
                             type="text"
                             placeholder="Type title"
                             value={taskForEdit ? taskForEdit.title : title}
+                            required
                             onChange={event =>
                                 this.setState({
                                     task: {
@@ -65,13 +72,7 @@ export class TaskForm extends React.Component {
                             }
                         />
                     </ControlWrapper>
-                    <Button
-                        onClick={() => {
-                            handleAddTask(task);
-                            this.setState({ task: INITIAL_TASK });
-                            onRequestClose();
-                        }}
-                    >
+                    <Button type="submit">
                         {taskForEdit ? 'update' : 'save'}
                     </Button>
                 </Form>

@@ -28,16 +28,19 @@ const SortIcon = styled(Icon)`
 
 export class Todo extends React.Component {
     state = {
-        tasks: [
-            { id: 1, title: 'title 1', text: '', completed: false },
-            { id: 2, title: 'title 2', text: '', completed: false },
-            { id: 3, title: 'title 3', text: '', completed: true },
-            { id: 4, title: 'title 4', text: '', completed: false },
-        ],
+        tasks: [],
         sortOrder: SORT_UP,
         formOpened: false,
         taskForEdit: null,
     };
+
+    componentDidMount() {
+        const tasks = window.localStorage.getItem('tasks');
+
+        if (tasks) {
+            this.setState({ tasks: JSON.parse(tasks) });
+        }
+    }
 
     handleOpenForm = (task = null) => {
         const { formOpened } = this.state;
@@ -61,7 +64,9 @@ export class Todo extends React.Component {
                 ...tasks,
                 {
                     ...task,
-                    id: Math.max.apply(Math, tasks.map(task => task.id)) + 1,
+                    id: tasks.length
+                        ? Math.max.apply(Math, tasks.map(task => task.id)) + 1
+                        : 0,
                 },
             ],
             taskForEdit: null,
