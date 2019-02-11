@@ -26,12 +26,18 @@ const SortIcon = styled(Icon)`
     margin-bottom: 14px;
 `;
 
+const INITIAL_TASK = {
+    title: '',
+    text: '',
+    completed: false,
+};
+
 export class Todo extends React.Component {
     state = {
         tasks: [],
         sortOrder: SORT_UP,
         formOpened: false,
-        taskForEdit: null,
+        taskForEdit: INITIAL_TASK,
     };
 
     componentDidMount() {
@@ -54,11 +60,18 @@ export class Todo extends React.Component {
     };
 
     handleCloseForm = () => {
-        this.setState({ formOpened: false, taskForEdit: null });
+        this.setState({ formOpened: false, taskForEdit: INITIAL_TASK });
     };
 
-    handleAddTask = task => {
+    handleSaveTask = task => {
         const { tasks } = this.state;
+        const taskExists = tasks.find(item => item.id === task.id);
+        taskExists ? this.updateTask(task) : this.addTask(task);
+    };
+
+    addTask = task => {
+        const { tasks } = this.state;
+
         this.setState({
             tasks: [
                 ...tasks,
@@ -69,7 +82,18 @@ export class Todo extends React.Component {
                         : 0,
                 },
             ],
-            taskForEdit: null,
+            taskForEdit: INITIAL_TASK,
+        });
+    };
+
+    updateTask = task => {
+        const { tasks } = this.state;
+        const updatedTasks = [...tasks];
+        const taskIndex = updatedTasks.findIndex(item => item.id === task.id);
+
+        updatedTasks[taskIndex] = task;
+        this.setState({
+            tasks: updatedTasks,
         });
     };
 
@@ -129,12 +153,14 @@ export class Todo extends React.Component {
                     handleDeleteTask={this.handleDeleteTask}
                     handleOpenForm={this.handleOpenForm}
                 />
-                <TaskForm
-                    isOpen={formOpened}
-                    onRequestClose={this.handleCloseForm}
-                    handleAddTask={this.handleAddTask}
-                    taskForEdit={taskForEdit}
-                />
+                {formOpened && (
+                    <TaskForm
+                        isOpen={formOpened}
+                        onRequestClose={this.handleCloseForm}
+                        handleSaveTask={this.handleSaveTask}
+                        taskForEdit={taskForEdit}
+                    />
+                )}
             </Container>
         );
     }

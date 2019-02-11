@@ -24,14 +24,14 @@ const INITIAL_TASK = {
 
 export class TaskForm extends React.Component {
     state = {
-        task: INITIAL_TASK,
+        task: this.props.taskForEdit,
     };
 
     render() {
         const {
             isOpen,
             onRequestClose,
-            handleAddTask,
+            handleSaveTask,
             taskForEdit,
         } = this.props;
         const { task } = this.state;
@@ -41,7 +41,7 @@ export class TaskForm extends React.Component {
             <ModalBox isOpen={isOpen} onRequestClose={onRequestClose}>
                 <Form
                     onSubmit={() => {
-                        handleAddTask(task);
+                        handleSaveTask(task);
                         this.setState({ task: INITIAL_TASK });
                         onRequestClose();
                     }}
@@ -50,7 +50,7 @@ export class TaskForm extends React.Component {
                         <Input
                             type="text"
                             placeholder="Type title"
-                            value={taskForEdit ? taskForEdit.title : title}
+                            value={title}
                             required
                             onChange={event =>
                                 this.setState({
@@ -64,7 +64,7 @@ export class TaskForm extends React.Component {
                     </ControlWrapper>
                     <ControlWrapper>
                         <TextArea
-                            value={taskForEdit ? taskForEdit.text : text}
+                            value={text}
                             onChange={event =>
                                 this.setState({
                                     task: { ...task, text: event.target.value },
@@ -73,7 +73,7 @@ export class TaskForm extends React.Component {
                         />
                     </ControlWrapper>
                     <Button type="submit">
-                        {taskForEdit ? 'update' : 'save'}
+                        {taskForEdit.id !== undefined ? 'update' : 'save'}
                     </Button>
                 </Form>
             </ModalBox>
@@ -84,6 +84,6 @@ export class TaskForm extends React.Component {
 TaskForm.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onRequestClose: PropTypes.func.isRequired,
-    handleAddTask: PropTypes.func.isRequired,
+    handleSaveTask: PropTypes.func.isRequired,
     taskForEdit: PropTypes.object,
 };
